@@ -191,6 +191,10 @@ pub fn print_colourful_prefix(prefix: &str, text: &str) {
     buffer_writer.print(&buffer).expect("print_green_prefix");
 }
 
+pub fn stdout_buffer_writer() -> BufferWriter {
+    BufferWriter::stdout(color_choice())
+}
+
 pub fn stderr_buffer_writer() -> BufferWriter {
     // Don't add color codes to the output if standard error isn't connected to a terminal
     BufferWriter::stderr(color_choice())

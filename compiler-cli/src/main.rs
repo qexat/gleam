@@ -70,6 +70,7 @@ mod publish;
 mod remove;
 mod run;
 mod shell;
+mod toplevel;
 
 use config::root_config;
 use dependencies::UseManifest;
@@ -279,6 +280,9 @@ enum Command {
     /// Export something useful from the Gleam project
     #[command(subcommand)]
     Export(ExportTarget),
+
+    /// Start the Gleam-native shell
+    Toplevel,
 }
 
 fn template_doc() -> &'static str {
@@ -572,6 +576,8 @@ fn main() {
         Command::Export(ExportTarget::PackageInterface { output }) => {
             export::package_interface(output)
         }
+
+        Command::Toplevel => toplevel::command(),
     };
 
     match result {

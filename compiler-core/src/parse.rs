@@ -1050,7 +1050,7 @@ where
         }
     }
 
-    fn parse_statement(&mut self) -> Result<Option<UntypedStatement>, ParseError> {
+    pub fn parse_statement(&mut self) -> Result<Option<UntypedStatement>, ParseError> {
         match self.tok0.take() {
             Some((start, Token::Use, end)) => {
                 self.advance();
