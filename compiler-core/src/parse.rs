@@ -2874,13 +2874,28 @@ where
                         self.advance(); // name
 
                         match self.tok0 {
-                            Some((_, Token::LeftParen, _)) => parse_error(
-                                ParseErrorType::UnexpectedFunction,
-                                SrcSpan {
-                                    start,
-                                    end: end + 1,
-                                },
-                            ),
+                            Some((_, Token::LeftParen, _)) => {
+                                // we need to consume the left parenthesis before
+                                // attempting to parse the function args
+                                self.advance();
+
+                                let args = self.parse_fn_args()?;
+
+                                if args.iter().any(|arg| match arg {
+                                    ParserArg::Hole { .. } => true,
+                                    _ => false,
+                                }) {
+                                    dbg!("There is a hole");
+                                }
+
+                                parse_error(
+                                    ParseErrorType::UnexpectedFunction,
+                                    SrcSpan {
+                                        start,
+                                        end: end + 1,
+                                    },
+                                )
+                            }
                             _ => Ok(Some(Constant::Var {
                                 location: SrcSpan { start, end },
                                 module: Some((name, SrcSpan::new(start, module_end))),

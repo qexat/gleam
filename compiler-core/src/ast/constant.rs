@@ -63,6 +63,14 @@ pub enum Constant<T, RecordTag> {
         right: Box<Self>,
     },
 
+    PartialFunctionCall {
+        location: SrcSpan,
+        module: Option<(EcoString, SrcSpan)>,
+        name: EcoString,
+        args: Vec<CallArg<Self>>,
+        type_: T,
+    },
+
     /// A placeholder constant used to allow module analysis to continue
     /// even when there are type errors. Should never end up in generated code.
     Invalid {
@@ -85,6 +93,7 @@ impl TypedConstant {
             | Constant::Record { type_, .. }
             | Constant::Var { type_, .. }
             | Constant::Invalid { type_, .. } => type_.clone(),
+            Constant::PartialFunctionCall { type_, .. } => type_.clone(),
         }
     }
 }
@@ -107,7 +116,8 @@ impl<A, B> Constant<A, B> {
             | Constant::BitArray { location, .. }
             | Constant::Var { location, .. }
             | Constant::Invalid { location, .. }
-            | Constant::StringConcatenation { location, .. } => *location,
+            | Constant::StringConcatenation { location, .. }
+            | Constant::PartialFunctionCall { location, .. } => *location,
         }
     }
 
